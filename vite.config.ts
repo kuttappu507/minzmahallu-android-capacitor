@@ -1,17 +1,45 @@
-import { defineConfig } from "vite";
+import { defineConfig, type Plugin } from "vite";
 import react from "@vitejs/plugin-react";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
+/**
+ * Android web-build module redirection.
+ *
+ * The Electron service modules import two Node-bound files:
+ *   - electron/db/connection.js   (better-sqlite3 + Electron app paths)
+ *   - electron/print/utils.js     (fs-based font/stylesheet loaders)
+ *
+ * For the Capacitor bundle BOTH are redirected to browser implementations,
+ * so the REAL service code (16 domain modules, auth, security, doc numbers,
+ * receipt/certificate templates) runs unmodified inside the WebView against
+ * sql.js. The vite dev server and any electron build of this branchout are
+ * not supported — desktop development happens in minzmahallu-electron.
+ */
+function mmsWebShims(): Plugin {
+  const resolveWeb = (rel: string) => path.resolve(__dirname, rel);
+  return {
+    name: "mms-web-shims",
+    enforce: "pre",
+    resolveId(source) {
+      if (/(^|\/)db\/connection\.js$/.test(source)) return resolveWeb("src/webapi/db.web.ts");
+      if (/(^|\/)print\/utils\.js$/.test(source)) return resolveWeb("src/webapi/print-utils.web.ts");
+      return null;
+    },
+  };
+}
+
 export default defineConfig({
-  plugins: [react()],
+  plugins: [react(), mmsWebShims()],
   base: "./",
   resolve: {
-    alias: {
-      "@": path.resolve(__dirname, "./src"),
-    },
+    alias: [
+      { find: "@", replacement: path.resolve(__dirname, "./src") },
+      { find: "node:crypto", replacement: path.resolve(__dirname, "./src/webapi/node-shims/crypto.ts") },
+      { find: "node:module", replacement: path.resolve(__dirname, "./src/webapi/node-shims/module.ts") },
+    ],
   },
   server: {
     port: 5174,
@@ -22,9 +50,17 @@ export default defineConfig({
   build: {
     outDir: "dist",
     emptyOutDir: true,
+    chunkSizeWarningLimit: 2400,
     rollupOptions: {
       input: {
         index: path.resolve(__dirname, "index.html"),
+      },
+      output: {
+        manualChunks: {
+          "vendor-sql": ["sql.js"],
+          "vendor-crypto": ["hash-wasm"],
+          "vendor-excel": ["exceljs"],
+        },
       },
     },
   },
