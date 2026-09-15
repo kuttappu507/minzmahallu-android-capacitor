@@ -47,3 +47,11 @@ vite.config.d.ts
 coverage/
 resources/waha/
 scripts/brand-out/
+
+# Android / Capacitor build outputs
+android/.gradle/
+android/build/
+android/app/build/
+android/local.properties
+android/capacitor-cordova-android-plugins/build/
+*.apk
