@@ -1,0 +1,5 @@
+@page { size: A4; margin: 0; }
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; width: 210mm; min-height: 297mm; background: #fff; }
+body { font-family: Poppins, "Segoe UI", Arial, sans-serif; color: #18231e; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+.print-page { width: 210mm; min-height: 297mm; position: relative; }

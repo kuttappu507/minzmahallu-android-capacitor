@@ -1,0 +1,12 @@
+-- MMS Schema Migrations
+--
+-- Place future migration files here using the naming convention:
+--   V<NNN>_<short_description>.sql
+--
+-- Example: V002_add_events_table.sql
+--
+-- The Database class will apply each migration in numeric order if its
+-- version number is greater than the current schema_version.
+--
+-- V001 corresponds to the initial production schema (v1.0.0) which is
+-- applied directly from sql/schema.sql on first launch.

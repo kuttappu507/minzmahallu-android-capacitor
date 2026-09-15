@@ -1,0 +1,70 @@
+/* ============================================================================
+ * Certificate preview — on-screen styles (SEPARATE stylesheet)
+ * ============================================================================
+ * Embedded into the certificate preview popup document by the print template
+ * layer (electron/print/certificate.template.ts via getPreviewScreenCss()).
+ * The A4 template's print-sized pt values look tiny in a browser window, so
+ * the screen view enlarges the certificate; printing from the preview window
+ * still uses the exact 1:1 page size via the @media print reset below.
+ * All preview styling lives here — no inline <style> injection in components.
+ * ========================================================================== */
+
+html,
+body {
+  background: #e7ebe8 !important;
+  width: auto !important;
+  /* The print template locks html/body to one A4 box with overflow:hidden so
+     a certificate can never paginate; on screen that made the preview window
+     UNscrollable (body clipped the zoomed page, html killed the scrollbars).
+     Unlock both — the window scrolls to the whole certificate again. */
+  height: auto !important;
+  overflow: visible !important;
+  margin: 0 !important;
+  padding: 14px 0 !important;
+  display: flex;
+  /* Center safely WITHOUT justify-content:center: when the zoomed page is
+     wider than the window, centered flex items overflow BOTH edges and the
+     left half sits above the scroll origin (unreachable). Auto margins center
+     while it fits and resolve to 0 when it overflows, so every edge stays
+     reachable by scrolling. */
+}
+
+body > .cert {
+  /* flex:none — a default-shrink flex item would SQUASH the A4 page to the
+     viewport width on narrow windows and then overflow:hidden would clip the
+     right edge; the page must keep its true size and scroll instead. */
+  flex: none;
+  margin: 0 auto;
+  zoom: 1.35;
+  box-shadow: 0 10px 34px rgba(15, 40, 30, 0.22);
+  background: #fff;
+}
+
+/* html must stay a plain block: if html is itself a flex container, body
+   shrink-wraps to the certificate width as its flex item and the auto-margin
+   centering below never has free space to work with (page hugs the left
+   edge instead of floating centered on the backdrop). */
+html {
+  display: block;
+}
+
+@media print {
+  html,
+  body {
+    background: #fff !important;
+    padding: 0 !important;
+    display: block;
+    /* The screen rules above are !important and would otherwise leak into
+       printing FROM the preview window — re-lock the template's print
+       geometry: content height is the 1-page certificate, overflow clips
+       (e.g. the fixed reprint note) instead of spilling to a second page. */
+    width: auto !important;
+    height: auto !important;
+    overflow: hidden !important;
+  }
+  body > .cert {
+    zoom: 1 !important;
+    box-shadow: none !important;
+    margin: 0 !important;
+  }
+}
