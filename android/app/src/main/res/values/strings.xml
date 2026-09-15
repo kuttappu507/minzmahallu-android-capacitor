@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">MMS Mahallu</string>
+    <string name="title_activity_main">MMS Mahallu</string>
+    <string name="package_name">com.mms.minzmahallu</string>
+    <string name="custom_url_scheme">com.mms.minzmahallu</string>
+</resources>
