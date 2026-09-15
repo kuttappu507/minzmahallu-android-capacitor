@@ -5,10 +5,12 @@ import { useAuth } from "@/lib/auth";
 import { useI18n } from "@/i18n";
 import { Sidebar } from "@/components/layout/Sidebar";
 import { Topbar } from "@/components/layout/Topbar";
+import { MobileShell } from "@/components/mobile/MobileShell";
 import { ToastContainer } from "@/components/ToastContainer";
 import { Splash } from "@/components/Splash";
 import { CloseConfirmDialog } from "@/components/CloseConfirmDialog";
 import UpdateBanner from "@/components/UpdateBanner";
+import { useIsMobile } from "@/hooks/useIsMobile";
 import "@fontsource-variable/anek-malayalam/wght.css";
 import "@/styles/globals.css";
 import { LoginPage } from "@/pages/LoginPage";
@@ -23,7 +25,6 @@ const Staff = lazy(() => import("@/pages/Staff").then(m => ({ default: m.Staff }
 const Committee = lazy(() => import("@/pages/Committee").then(m => ({ default: m.Committee })));
 const Subscriptions = lazy(() => import("@/pages/Subscriptions").then(m => ({ default: m.Subscriptions })));
 const Donations = lazy(() => import("@/pages/Donations").then(m => ({ default: m.Donations })));
-const WhatsApp = lazy(() => import("@/pages/WhatsApp").then(m => ({ default: m.WhatsApp })));
 const Accounting = lazy(() => import("@/pages/Accounting").then(m => ({ default: m.Accounting })));
 const Assets = lazy(() => import("@/pages/Assets").then(m => ({ default: m.Assets })));
 const Marriages = lazy(() => import("@/pages/Marriages").then(m => ({ default: m.Marriages })));
@@ -75,10 +76,15 @@ function OfflineMalayalamLayer() {
 
 function ProtectedLayout() {
   const location = useLocation();
+  const isMobile = useIsMobile();
   useEffect(() => { document.body.classList.toggle("route-accounting", location.pathname === "/accounting"); return () => document.body.classList.remove("route-accounting"); }, [location.pathname]);
-  return <div id="app" className="app-shell"><Topbar /><div className="app-body"><Sidebar /><div className="maincol"><div id="content"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="spinner-sm" /></div>}><Routes>
-    <Route path="/" element={<Dashboard />} /><Route path="/families" element={<Families />} /><Route path="/members" element={<Members />} /><Route path="/staff" element={<Staff />} /><Route path="/committee" element={<Committee />} /><Route path="/subscriptions" element={<Subscriptions />} /><Route path="/donations" element={<Donations />} /><Route path="/whatsapp" element={<WhatsApp />} /><Route path="/accounting" element={<Accounting />} /><Route path="/assets" element={<Assets />} /><Route path="/marriages" element={<Marriages />} /><Route path="/deaths" element={<Deaths />} /><Route path="/welfare" element={<Welfare />} /><Route path="/certificates" element={<Certificates />} /><Route path="/tokens" element={<TokenEvents />} /><Route path="/tokens/manage" element={<TokensWithPrint />} /><Route path="/reports" element={<Reports />} /><Route path="/settings" element={<Settings />} /><Route path="/users" element={<Users />} /><Route path="/audit" element={<AuditLog />} /><Route path="/backup" element={<Backup />} />
-  </Routes></Suspense></div></div></div></div>;
+  const routes = <Routes>
+    <Route path="/" element={<Dashboard />} /><Route path="/families" element={<Families />} /><Route path="/members" element={<Members />} /><Route path="/staff" element={<Staff />} /><Route path="/committee" element={<Committee />} /><Route path="/subscriptions" element={<Subscriptions />} /><Route path="/donations" element={<Donations />} /><Route path="/accounting" element={<Accounting />} /><Route path="/assets" element={<Assets />} /><Route path="/marriages" element={<Marriages />} /><Route path="/deaths" element={<Deaths />} /><Route path="/welfare" element={<Welfare />} /><Route path="/certificates" element={<Certificates />} /><Route path="/tokens" element={<TokenEvents />} /><Route path="/tokens/manage" element={<TokensWithPrint />} /><Route path="/reports" element={<Reports />} /><Route path="/settings" element={<Settings />} /><Route path="/users" element={<Users />} /><Route path="/audit" element={<AuditLog />} /><Route path="/backup" element={<Backup />} /><Route path="/whatsapp" element={<Navigate to="/" replace />} />
+  </Routes>;
+  if (isMobile) {
+    return <div className="app-shell mobile-shell-root"><MobileShell><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="spinner-sm" /></div>}>{routes}</Suspense></MobileShell></div>;
+  }
+  return <div id="app" className="app-shell"><Topbar /><div className="app-body"><Sidebar /><div className="maincol"><div id="content"><Suspense fallback={<div className="flex items-center justify-center h-64"><div className="spinner-sm" /></div>}>{routes}</Suspense></div></div></div></div>;
 }
 
 function LanguagePersistence() {

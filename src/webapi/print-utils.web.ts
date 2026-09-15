@@ -11,9 +11,9 @@
  *   - getPreviewScreenCss() bundled stylesheet for the certificate preview
  */
 import fontCssRaw from "@fontsource-variable/anek-malayalam/wght.css?raw";
-import mlWoff2 from "../../assets/fonts/anek-malayalam-malayalam-wght-normal.woff2?url";
-import latinWoff2 from "../../assets/fonts/anek-malayalam-latin-wght-normal.woff2?url";
-import latinExtWoff2 from "../../assets/fonts/anek-malayalam-latin-ext-wght-normal.woff2?url";
+import mlWoff2 from "../assets/fonts/anek-malayalam-malayalam-wght-normal.woff2?url";
+import latinWoff2 from "../assets/fonts/anek-malayalam-latin-wght-normal.woff2?url";
+import latinExtWoff2 from "../assets/fonts/anek-malayalam-latin-ext-wght-normal.woff2?url";
 import previewScreenCss from "../../resources/templates/preview-screen.css?raw";
 
 export function esc(value: any): string {

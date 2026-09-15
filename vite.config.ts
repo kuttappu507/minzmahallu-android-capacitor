@@ -23,9 +23,14 @@ function mmsWebShims(): Plugin {
   return {
     name: "mms-web-shims",
     enforce: "pre",
-    resolveId(source) {
+    resolveId(source, importer) {
+      const imp = String(importer || "").split(path.sep).join("/");
+      // connection.js — imported as "../db/connection.js", "../../db/connection.js" …
       if (/(^|\/)db\/connection\.js$/.test(source)) return resolveWeb("src/webapi/db.web.ts");
-      if (/(^|\/)print\/utils\.js$/.test(source)) return resolveWeb("src/webapi/print-utils.web.ts");
+      // print/utils.js — templates inside electron/print/ import "./utils.js"
+      if (/(^|\/)print\/utils\.js$/.test(source) || (source === "./utils.js" && imp.includes("/electron/print/"))) {
+        return resolveWeb("src/webapi/print-utils.web.ts");
+      }
       return null;
     },
   };
