@@ -1562,11 +1562,15 @@ body.island-open { overflow: hidden; }
 }
 
 /* ===== Island FAB (floating menu button) ===== */
+/* Centered via left/right + margin auto, NOT translateX(-50%): framer-motion
+ * owns the transform property on this element (y/spring/tap animations) and
+ * would overwrite a CSS translateX, shoving the pill off-centre. */
 .island-fab {
   position: fixed;
-  left: 50%;
+  left: 0; right: 0;
+  margin-inline: auto;
+  width: fit-content;
   bottom: calc(env(safe-area-inset-bottom, 0px) + 18px);
-  transform: translateX(-50%);
   display: flex; align-items: center; gap: 9px;
   padding: 14px 26px 14px 20px;
   border: none; border-radius: 999px;
@@ -1590,9 +1594,10 @@ body.island-open { overflow: hidden; }
 }
 .island-panel {
   position: fixed;
-  left: 50%;
+  /* Same rule as .island-fab: no CSS translateX — framer owns transform. */
+  left: 0; right: 0;
+  margin-inline: auto;
   bottom: calc(env(safe-area-inset-bottom, 0px) + 86px);
-  transform: translateX(-50%);
   width: min(430px, calc(100vw - 20px));
   max-height: calc(100dvh - env(safe-area-inset-top, 0px) - 140px);
   display: flex; flex-direction: column;

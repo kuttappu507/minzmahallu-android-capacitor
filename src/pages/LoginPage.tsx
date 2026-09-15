@@ -92,7 +92,7 @@ export function LoginPage() {
               <button type="submit" className="btn bp bblock login-submit" disabled={loading}>{loading?<><Loader2 size={16} className="animate-spin"/>{copy.signing}</>:<><LogIn size={16}/>{t("login_button")}</>}</button>
             </form>
           </> }
-          <p className="login-foot">{t("app_name")} · v2.0.0</p>
+          <p className="login-foot">{t("app_name")} · v3.0.0</p>
         </div>
       </div>
     </div>

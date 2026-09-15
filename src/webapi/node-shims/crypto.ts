@@ -18,17 +18,36 @@
 import { createSHA256, type IHasher } from "hash-wasm";
 import { Buffer } from "buffer";
 
-let hasher: IHasher | null = null;
+/*
+ * hash-wasm's IHasher is STATEFUL: after digest() it must be init()'ed again
+ * before the next update(). A single shared instance therefore breaks the
+ * second createHash() call ("update() called before init()" — seen as
+ * "[audit] Failed to log" on the audit chain). A small pool gives every
+ * createHash()/sha256Raw() its own hasher: acquire → init → use → release.
+ * All real call sites are one-shot (update…digest immediately), so 8 slots
+ * are far more than the possible concurrency.
+ */
+const POOL_SIZE = 8;
+const pool: IHasher[] = [];
 
 /** Must run before any service module performs a crypto operation. */
 export async function initCrypto(): Promise<void> {
-  hasher = await createSHA256();
-  hasher.init();
+  while (pool.length < POOL_SIZE) {
+    const h = await createSHA256();
+    h.init();
+    pool.push(h);
+  }
 }
 
-function assertReady(): IHasher {
-  if (!hasher) throw new Error("crypto shim not initialised — call initCrypto() at boot");
-  return hasher;
+function acquire(): IHasher {
+  const h = pool.pop();
+  if (!h) throw new Error("crypto shim: hasher pool exhausted — concurrent hash streams exceed 8");
+  h.init(); // fresh state for every stream, mirroring node's createHash()
+  return h;
+}
+
+function release(h: IHasher): void {
+  pool.push(h);
 }
 
 type AnyBytes = string | Uint8Array | ArrayBuffer | ArrayLike<number>;
@@ -41,10 +60,11 @@ function toU8(data: AnyBytes): Uint8Array {
 }
 
 function sha256Raw(data: Uint8Array): Uint8Array {
-  const h = assertReady();
-  h.init();
+  const h = acquire();
   h.update(data);
-  return h.digest("binary");
+  const out = h.digest("binary") as Uint8Array;
+  release(h);
+  return out;
 }
 
 function u8ToHex(bytes: Uint8Array): string {
@@ -87,19 +107,24 @@ function hmacSha256(key: Uint8Array, msg: Uint8Array): Uint8Array {
 export function createHash(algorithm: string): HashLike {
   const alg = String(algorithm || "").replace(/-/g, "").toLowerCase();
   if (alg !== "sha256") throw new Error(`crypto shim: unsupported hash algorithm "${algorithm}"`);
-  const h = assertReady();
+  const h = acquire();
+  let digested = false;
   return {
     update(data: AnyBytes) {
       h.update(toU8(data));
       return this;
     },
     digest(outputType?: "hex" | "binary" | "base64") {
-      if (outputType === "binary") return h.digest("binary");
-      if (outputType === "base64") {
-        const bytes = h.digest("binary");
-        return u8ToB64(bytes as Uint8Array);
-      }
-      return h.digest();
+      if (digested) throw new Error("crypto shim: digest() called twice on one hash stream");
+      digested = true;
+      const out =
+        outputType === "binary"
+          ? h.digest("binary")
+          : outputType === "base64"
+            ? u8ToB64(h.digest("binary") as Uint8Array)
+            : h.digest();
+      release(h); // stream finished — hasher back to the pool
+      return out;
     },
   };
 }
@@ -108,7 +133,6 @@ export function createHash(algorithm: string): HashLike {
 export function createHmac(algorithm: string, key: AnyBytes): HashLike {
   const alg = String(algorithm || "").replace(/-/g, "").toLowerCase();
   if (alg !== "sha256") throw new Error(`crypto shim: unsupported hmac algorithm "${algorithm}"`);
-  assertReady();
   const k = toU8(key);
   let msg: Uint8Array | null = null;
   return {
@@ -141,7 +165,6 @@ export function pbkdf2Sync(
   keylen: number,
   _digest?: string
 ): Buffer {
-  assertReady();
   const P = toU8(password);
   const S = toU8(salt);
   const iters = Math.max(1, Math.floor(Number(iterations) || 1));

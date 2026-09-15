@@ -2,6 +2,7 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import { HashRouter } from "react-router-dom";
 import App from "./App";
+import { useI18n } from "./i18n";
 import "./styles/globals.css";
 import { bootWebBridge } from "./webapi/boot";
 // Side-effect import: sets html.lowfx BEFORE first render (weak-hardware
@@ -17,11 +18,14 @@ if (import.meta.env.DEV && ["localhost", "127.0.0.1"].includes(window.location.h
 }
 
 function BootError({ message }: { message: string }) {
+  // The i18n store rehydrates synchronously from storage at module init,
+  // so the user's language is known even on this fatal-error screen.
+  const { t } = useI18n();
   return (
     <div style={{ minHeight: "100dvh", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 12, fontFamily: "system-ui, sans-serif", padding: 24, textAlign: "center" }}>
-      <b style={{ fontSize: 18 }}>MMS could not start</b>
+      <b style={{ fontSize: 18 }}>{t("boot_error_title")}</b>
       <span style={{ opacity: 0.75, maxWidth: 420, fontSize: 14 }}>{message}</span>
-      <button onClick={() => window.location.reload()} style={{ padding: "10px 22px", borderRadius: 999, border: "none", background: "#0d9488", color: "#fff", fontSize: 15, marginTop: 8 }}>Try again</button>
+      <button onClick={() => window.location.reload()} style={{ padding: "10px 22px", borderRadius: 999, border: "none", background: "#0d9488", color: "#fff", fontSize: 15, marginTop: 8 }}>{t("boot_error_retry")}</button>
     </div>
   );
 }

@@ -3,7 +3,13 @@ import path from "node:path";
 
 const root = path.resolve("src");
 const extensions = new Set([".tsx", ".ts", ".jsx", ".js"]);
-const ignored = new Set([path.join("src", "i18n", "index.ts")]);
+// src/webapi is the web twin of the electron main process (bridge/IPC layer):
+// backend Error literals there follow the same convention as electron/services,
+// which this audit never scans. Only genuine UI files belong in this report.
+const ignored = new Set([
+  path.join("src", "i18n", "index.ts"),
+  path.join("src", "webapi"),
+]);
 const technicalTokens = new Set([
   "results.reduce",
   "Promise",
@@ -32,6 +38,7 @@ function walk(dir) {
 function scan(file) {
   const rel = path.relative(process.cwd(), file);
   if (ignored.has(rel)) return;
+  if (rel.split(path.sep)[0] === "src" && ignored.has(path.join("src", rel.split(path.sep)[1]))) return;
   const text = fs.readFileSync(file, "utf8");
   const add = (match, value, index, kind) => {
     const before = text.slice(0, index);

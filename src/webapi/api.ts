@@ -34,7 +34,6 @@ import { getAnekMalayalamCss, getPreviewScreenCss } from "./print-utils.web";
 import { printHtml, outputBytes, printLang } from "./print.web";
 import * as receipts from "./receipts.web";
 import * as backup from "./backup.web";
-import ExcelJS from "exceljs";
 
 type Actor = { id: number; username: string; role: string };
 
@@ -282,7 +281,10 @@ const api: any = {
         const summary = data.accounting.unifiedSummary(allFilter);
         const rows = listRes.rows || [];
         const periodLabel = filter?.period || "all";
-        const Excel = (ExcelJS as any).default ?? ExcelJS;
+        // exceljs is loaded lazily: its browser bundle is heavy and its
+        // module evaluation must never block app boot.
+        const ExcelJS: any = await import("exceljs");
+        const Excel = ExcelJS.default ?? ExcelJS;
         const wb = new Excel.Workbook();
         const LEDGER_HEADERS = ["Date", "Source", "Type", "Description", "Category", "Receipt No", "Voucher No", "Bill No", "Payee", "Payment Method", "Transaction Ref", "Status", "Void Reason", "Amount"];
         const ledgerData = rows.map((r: any) => ({
@@ -714,8 +716,42 @@ const api: any = {
   },
 };
 
+/*
+ * Preload-contract guard — the desktop bridge returns a PROMISE from every
+ * method (ipcRenderer.invoke is always async), and large parts of the UI
+ * chain .then() directly on window.mms.* (UpdateBanner, page effects, …).
+ * Bridge methods that return plain values (services are synchronous SQL)
+ * would break that contract with "…then is not a function". Wrapping every
+ * method in Promise.resolve() restores the exact desktop contract.
+ *
+ * EXCEPTION — event subscribers: events.onDownloadFailed / events.onUpdateAvailable /
+ * win.onAskClose must keep returning a SYNCHRONOUS unsubscribe function,
+ * exactly like ipcRenderer.on in preload.mts.
+ */
+const EVENT_SUBSCRIBERS = new Set([
+  "events.onDownloadFailed",
+  "events.onUpdateAvailable",
+  "win.onAskClose",
+]);
+
+export function toPromiseSurface(node: unknown, prefix = ""): any {
+  if (node === null || typeof node !== "object" || Array.isArray(node)) return node;
+  const out: any = {};
+  for (const [key, value] of Object.entries(node as Record<string, unknown>)) {
+    const path = prefix ? `${prefix}.${key}` : key;
+    if (typeof value === "function") {
+      out[key] = EVENT_SUBSCRIBERS.has(path)
+        ? value
+        : (...args: unknown[]) => Promise.resolve((value as (...a: unknown[]) => unknown).apply(node, args));
+    } else {
+      out[key] = toPromiseSurface(value, path);
+    }
+  }
+  return out;
+}
+
 export function installWebApi(): void {
-  (globalThis as any).mms = api;
+  (globalThis as any).mms = toPromiseSurface(api);
 }
 
 export default api;

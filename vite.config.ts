@@ -39,6 +39,10 @@ function mmsWebShims(): Plugin {
 export default defineConfig({
   plugins: [react(), mmsWebShims()],
   base: "./",
+  // exceljs (and some browserified deps) still reference the Node `global`.
+  define: {
+    global: "globalThis",
+  },
   resolve: {
     alias: [
       { find: "@", replacement: path.resolve(__dirname, "./src") },

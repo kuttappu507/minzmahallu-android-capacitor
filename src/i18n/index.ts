@@ -699,6 +699,8 @@ const translations: Record<string, { en: string; ml: string }> = {
   committee_summary_ending_soon: { en: "Terms Ending Soon", ml: "അവസാനിക്കാനിരിക്കുന്നവ" },
   committee_summary_total: { en: "Total Records", ml: "മൊത്തം രേഖകൾ" },
   committee_ending_soon_hint: { en: "Term ends within 30 days", ml: "30 ദിവസത്തിനുള്ളിൽ കാലാവധി അവസാനിക്കും" },
+  boot_error_title: { en: "MMS could not start", ml: "എം‌എം‌എസ് ആരംഭിക്കാനായില്ല" },
+  boot_error_retry: { en: "Try again", ml: "വീണ്ടും ശ്രമിക്കുക" },
 };
 
 interface I18nState {
