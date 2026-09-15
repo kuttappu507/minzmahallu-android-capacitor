@@ -31,7 +31,7 @@ const translations: Record<string, { en: string; ml: string }> = {
   nav_whatsapp: { en: "WhatsApp", ml: "വാട്ട്സ്ആപ്പ്" },
   nav_accounting: { en: "Accounting", ml: "അക്കൗണ്ടിംഗ്" },
   nav_assets: { en: "Assets", ml: "ആസ്തികൾ" },
-  nav_marriage: { en: "Marriage Register", ml: "നികാഹ് രജിസ്റ്റർ" },
+  nav_marriage: { en: "Nikah Register", ml: "നികാഹ് രജിസ്റ്റർ" },
   nav_death: { en: "Death Register", ml: "മരണ രജിസ്റ്റർ" },
   nav_welfare: { en: "Welfare", ml: "ക്ഷേമം" },
   nav_certificates: { en: "Certificates", ml: "സർട്ടിഫിക്കറ്റുകൾ" },
@@ -63,7 +63,7 @@ const translations: Record<string, { en: string; ml: string }> = {
   dash_monthly_collection: { en: "Collection", ml: "പിരിവ്" },
   dash_pending_dues: { en: "Pending Dues", ml: "ബാക്കി തുക" },
   dash_donations_month: { en: "Donations (Month)", ml: "സംഭാവനകൾ (മാസം)" },
-  dash_marriages_year: { en: "Marriages (Year)", ml: "നികാഹുകൾ (വർഷം)" },
+  dash_marriages_year: { en: "Nikahs (Year)", ml: "നികാഹുകൾ (വർഷം)" },
   dash_deaths_year: { en: "Deaths (Year)", ml: "മരണങ്ങൾ (വർഷം)" },
   dash_today_glance: { en: "Today at a glance", ml: "ഇന്നത്തെ സംഗ്രഹം" },
   dash_receipts_today: { en: "Receipts today", ml: "ഇന്നത്തെ രസീതുകൾ" },
@@ -166,8 +166,8 @@ const translations: Record<string, { en: string; ml: string }> = {
   add_transaction: { en: "Add Transaction", ml: "ഇടപാട് ചേർക്കുക" },
 
   // Marriage
-  mrg_title: { en: "Marriage Register", ml: "നികാഹ് രജിസ്റ്റർ" },
-  mrg_number: { en: "Marriage No", ml: "നികാഹ് നമ്പർ" },
+  mrg_title: { en: "Nikah Register", ml: "നികാഹ് രജിസ്റ്റർ" },
+  mrg_number: { en: "Nikah No", ml: "നികാഹ് നമ്പർ" },
   mrg_bride: { en: "Bride", ml: "വധു" },
   mrg_groom: { en: "Groom", ml: "വരൻ" },
   mrg_bride_father: { en: "Bride Father", ml: "വധുവിന്റെ പിതാവ്" },
@@ -177,7 +177,7 @@ const translations: Record<string, { en: string; ml: string }> = {
   mrg_witness: { en: "Witness", ml: "സാക്ഷി" },
   mrg_mahar: { en: "Mahar", ml: "മഹർ" },
   mrg_place: { en: "Place", ml: "സ്ഥലം" },
-  mrg_register: { en: "Register Marriage", ml: "നികാഹ് രജിസ്റ്റർ ചെയ്യുക" },
+  mrg_register: { en: "Register Nikah", ml: "നികാഹ് രജിസ്റ്റർ ചെയ്യുക" },
   mrg_register_book: { en: "Print Register", ml: "രജിസ്റ്റർ അച്ചടിക്കുക" },
 
   // Death
@@ -212,7 +212,7 @@ const translations: Record<string, { en: string; ml: string }> = {
   cert_title: { en: "Certificates", ml: "സർട്ടിഫിക്കറ്റുകൾ" },
   cert_membership: { en: "Membership", ml: "അംഗത്വം" },
   cert_residence: { en: "Residence", ml: "വസതി" },
-  cert_marriage: { en: "Marriage", ml: "നികാഹ്" },
+  cert_marriage: { en: "Nikah", ml: "നികാഹ്" },
   cert_death: { en: "Death", ml: "മരണം" },
   cert_generate_pdf: { en: "Generate PDF", ml: "PDF ജനറേറ്റ്" },
 
@@ -478,7 +478,7 @@ const translations: Record<string, { en: string; ml: string }> = {
   cert_subtitle: { en: "Issue and manage community certificates with searchable picker.", ml: "തിരയാവുന്ന പട്ടികയിൽ നിന്ന് കമ്മ്യൂണിറ്റി സർട്ടിഫിക്കറ്റുകൾ നൽകുകയും കൈകാര്യം ചെയ്യുകയും ചെയ്യുക." },
   cert_member_code: { en: "Member Code", ml: "അംഗ കോഡ്" },
   cert_family_number: { en: "Family Number", ml: "കുടുംബ നമ്പർ" },
-  cert_marriage_number: { en: "Marriage Number", ml: "നികാഹ് നമ്പർ" },
+  cert_marriage_number: { en: "Nikah Number", ml: "നികാഹ് നമ്പർ" },
   cert_death_number: { en: "Death Number", ml: "മരണ നമ്പർ" },
   cert_issued_to: { en: "Issued To", ml: "നൽകിയിട്ടുള്ളത്" },
   cert_issued_date: { en: "Issued Date", ml: "നൽകിയ തീയതി" },

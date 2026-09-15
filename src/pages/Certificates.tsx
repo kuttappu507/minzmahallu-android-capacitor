@@ -150,7 +150,7 @@ export function Certificates() {
       },
     },
     marriage_noc: {
-      title: `Marriage NOC ${t("cert_title")}`,
+      title: `Nikah NOC ${t("cert_title")}`,
       codeLabel: t("cert_marriage_number"),
       needsIssuedTo: false,
       loader: async () => {
@@ -302,7 +302,7 @@ export function Certificates() {
     { type: "membership" as IssueType, label: t("cert_membership"), icon: FileText, tint: "t-blue" },
     { type: "residence" as IssueType, label: t("cert_residence"), icon: Home, tint: "t-em" },
     { type: "marriage" as IssueType, label: t("cert_marriage"), icon: Heart, tint: "t-pink" },
-    { type: "marriage_noc" as IssueType, label: "Marriage NOC", icon: FileCheck2, tint: "t-vio" },
+    { type: "marriage_noc" as IssueType, label: "Nikah NOC", icon: FileCheck2, tint: "t-vio" },
     { type: "death" as IssueType, label: t("cert_death"), icon: Skull, tint: "t-slate" },
   ];
 
@@ -320,7 +320,7 @@ export function Certificates() {
           death: "t-slate",
         };
         const certType = r.type?.toLowerCase();
-        return <span className={`pill ${tintMap[certType] || "t-slate"}`}>{certType === "noc" ? "Marriage NOC" : t(`cert_${r.type}`)}</span>;
+        return <span className={`pill ${tintMap[certType] || "t-slate"}`}>{certType === "noc" ? "Nikah NOC" : t(`cert_${r.type}`)}</span>;
       },
     },
     { header: t("cert_issued_to"), accessor: (r) => r.issued_to || "—" },

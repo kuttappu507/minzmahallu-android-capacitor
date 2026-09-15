@@ -271,7 +271,7 @@ export function Assets() {
               <Input type="date" value={form.acquisition_date || ""} onChange={e => setForm({ ...form, acquisition_date: e.target.value })} />
             </div>
             <div>
-              <Label>{tx("Custodian (responsible person)", "പരിപാലകൻ (ഉത്തരവാദി)")}</Label>
+              <Label>{tx("Custodian (responsible person)", "ചുമതലക്കാരൻ (ഉത്തരവാദി)")}</Label>
               <Input value={form.custodian || ""} onChange={e => setForm({ ...form, custodian: e.target.value })} />
             </div>
             <div>
