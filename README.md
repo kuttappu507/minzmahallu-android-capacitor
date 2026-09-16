@@ -67,9 +67,9 @@ Key directories:
 - `electron/` — kept as the shared backend/business-logic source; the bridge
   aliases `electron/db/connection.ts` to the sql.js implementation at build
   time (Vite plugin), so no Electron source was patched.
-- `scripts/smoke-capacitor-dist.mjs` — headless phone-viewport smoke test
+- `scripts/qa-clear-data-web.mjs` — headless phone-viewport client-side test
   that boots the real `dist/` build (setup → island menu → card tables →
-  write → reload persistence).
+  Danger Zone wipe → empty states → receipt reset → re-login).
 
 ## Build from source
 
